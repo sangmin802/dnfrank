@@ -6,4 +6,5 @@
   * 로그인 || 회원가입 passport활용  
   * JWT, Session 둘 다 구현되어있음. 현재 적용되있는것은 JWT방식. Session은 주석처리  
 * Node.js Express를 통한 개인서버  
-* webpack 적용 예정  
+* webpack 적용 예정    
+* !db.js, apikey.js는 gitignore로 제외하였음.
