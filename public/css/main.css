@@ -1,0 +1,211 @@
+.loading {
+  margin : 40% auto;
+}
+.userTab {
+  position : fixed;
+  left : 0;
+  top : 0;
+  padding : 20px;
+  width : 200px;
+  height : 100vh;
+  z-index : 99;
+  background-color : white;
+  border-right : 1px solid #dddddd;
+}
+.userTab .mainChar {
+  min-height : 225px;
+}
+.userTab .mainChar .mainCharInfo {
+  width : 100%;
+}
+.userTab .mainCharImg img {
+  display : block;
+  width : 100%;
+}
+
+.contentWrap {
+  min-width : 1240px;
+  padding : 30px 240px;
+}
+
+.contentWrap .searchForm {
+  width : 100%;
+  display : flex;
+  justify-content : center;
+}
+.contentWrap .searchForm div:nth-child(1) {
+  margin-right : 10px;
+}
+.contentWrap .searchForm input{
+  border : 0;
+  background : none;
+  outline : none;
+  padding : 10px;
+}
+.contentWrap .searchForm .searchText {
+  border-bottom : 2px solid #666666;
+}
+.contentWrap .searchForm .search {
+  background : #666666;
+  border : 1px solid #666666;
+  border-radius : 5px;
+  color : white;
+  transition : .1s;
+}
+.contentWrap .searchForm .search:hover {
+  background : white;
+  color : #666666;
+}
+
+
+.contentWrap .resultContent {
+  width : 100%;
+  height : fit-content;
+}
+
+.contentWrap .resultContent .userContent{
+  display : flex;
+  flex-wrap : wrap;
+}
+.contentWrap .resultContent .userContent .searchedUser {
+  width : calc((100% - 30px)/4 - 0.01px);
+  margin : 10px 10px 0 0;
+  padding : 10px 0;
+  border : 1px solid #eaeaea;
+  border-radius : 5px;
+  cursor : pointer;
+}
+.contentWrap .resultContent .userContent .searchedUser .chooseMainChar {
+  display : inline-block;
+  position : relative;
+  padding-left : 20px;
+  color : tomato;
+}
+.contentWrap .resultContent .userContent .searchedUser .chooseMainChar:after {
+  content : '메인 캐릭터 지정하기!';
+  width : 120px;
+  font-size : 12px;
+  color : black;
+  position : absolute;
+  left : 40px;
+  top : 4px;
+  display : none;
+}
+.contentWrap .resultContent .userContent .searchedUser .chooseMainChar:hover:after {
+  display : block;
+}
+
+.contentWrap .resultContent .userContent .searchedUser:hover {
+  box-shadow : 2px 2px 7px 1px rgba(0,0,0,0.2);
+}
+
+.contentWrap .resultContent .userContent .searchedUser:nth-child(4n) {
+  margin-right : 0;
+}
+.contentWrap .resultContent .userContent .searchedUser .searchedUserImg img {
+  display : block;
+  width : 100%;
+}
+.contentWrap .resultContent .userContent .searchedUser .searchedUserDesc div {
+  text-align : center;
+  line-height : 24px;
+}
+
+.contentWrap .resultContent .btnContent  {
+  margin : 10px auto;
+  text-align : center;
+}
+.contentWrap .resultContent .btnContent .btn {
+  display : inline-block;
+  background : #666666;
+  padding : 5px 10px;
+  margin : 5px;
+  color : white; 
+  cursor : pointer;
+}
+
+/* userDetail */
+.userDetail {
+  width : 50%;
+  margin : 0 auto;
+  position : relative;
+}
+.userDetail .userItemLeft, .userDetail .userItemRight {
+  position : absolute;
+  display : flex;
+  flex-wrap : wrap;
+  width : 25%;
+}
+.userDetail .userItemLeft { left : 0; top : 45%; }
+.userDetail .userItemRight { right : 0; top : 40%; }
+.userDetail .userItem { width : 50%; padding : 1%;}
+.userDetail .userItem img, .userDetail .userItem span {
+  display : block;
+  width : 100%;
+}
+.userDetail .userItem span { 
+  padding-bottom : 100%;
+  background : black;
+  border-radius: 2px;
+  position : relative;
+}
+.userDetail .userItem span b {
+  position : absolute;
+  left : 0; 
+  top : 0;
+  color : white;
+  word-break : break-all;
+  font-size : 0.8vw;
+}
+.userDetail .sUserImg {
+  display : block;
+  width : 100%;
+}
+
+.detailEquipment {
+  width : 60%;
+  margin : 0 auto;
+}
+.detailEquipment .dItemInfo {
+  display : flex;
+  margin-bottom : 10px;
+}
+.detailEquipment .dItemInfo .dItem {
+  display : flex;
+  align-items : center;
+  justify-content : center;
+  color : #666;
+  font-weight : 500;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.detailEquipment .dItemInfo .dItemImg {
+  width : 15%;
+  position : relative;
+}
+.detailEquipment .dItemInfo .dItemImg img {
+  display : block;
+  width : 100%;
+}
+.detailEquipment .dItemInfo .dItemImg span {
+  position : absolute;
+}
+.detailEquipment .dItemInfo .dItemImg .dItemLevel {
+  left : 2%;
+  top : 2%;
+  color : white;
+  font-weight : 500;
+  text-shadow : -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+}
+.detailEquipment .dItemInfo .dItemImg .dItemReinforce {
+  right : 2%;
+  bottom : 2%;
+  color : white;
+  font-weight : 500;
+  text-shadow : -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+}
+.detailEquipment .dItemInfo .dItemRarity {width : 10%;}
+.detailEquipment .dItemInfo .dItemType {width : 15%;}
+.detailEquipment .dItemInfo .dItemTypeDetail {width : 20%;}
+.detailEquipment .dItemInfo .dItemName {width : 40%;}
