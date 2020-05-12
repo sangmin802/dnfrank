@@ -162,15 +162,15 @@
   width : 100%;
 }
 
-.detailEquipment {
+.detailContentWrap {
   width : 60%;
   margin : 0 auto;
 }
-.detailEquipment .dItemInfo {
+.detailContentWrap .dItemInfo {
   display : flex;
   margin-bottom : 10px;
 }
-.detailEquipment .dItemInfo .dItem {
+.detailContentWrap .dItemInfo .dItem {
   display : flex;
   align-items : center;
   justify-content : center;
@@ -180,32 +180,32 @@
   overflow: hidden;
   white-space: nowrap;
 }
-.detailEquipment .dItemInfo .dItemImg {
+.detailContentWrap .dItemInfo .dItemImg {
   width : 15%;
   position : relative;
 }
-.detailEquipment .dItemInfo .dItemImg img {
+.detailContentWrap .dItemInfo .dItemImg img {
   display : block;
   width : 100%;
 }
-.detailEquipment .dItemInfo .dItemImg span {
+.detailContentWrap .dItemInfo .dItemImg span {
   position : absolute;
 }
-.detailEquipment .dItemInfo .dItemImg .dItemLevel {
+.detailContentWrap .dItemInfo .dItemImg .dItemLevel {
   left : 2%;
   top : 2%;
   color : white;
   font-weight : 500;
   text-shadow : -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
 }
-.detailEquipment .dItemInfo .dItemImg .dItemReinforce {
+.detailContentWrap .dItemInfo .dItemImg .dItemReinforce {
   right : 2%;
   bottom : 2%;
   color : white;
   font-weight : 500;
   text-shadow : -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
 }
-.detailEquipment .dItemInfo .dItemRarity {width : 10%;}
-.detailEquipment .dItemInfo .dItemType {width : 15%;}
-.detailEquipment .dItemInfo .dItemTypeDetail {width : 20%;}
-.detailEquipment .dItemInfo .dItemName {width : 40%;}
+.detailContentWrap .dItemInfo .dItemRarity {width : 10%;}
+.detailContentWrap .dItemInfo .dItemType {width : 15%;}
+.detailContentWrap .dItemInfo .dItemTypeDetail {width : 20%;}
+.detailContentWrap .dItemInfo .dItemName {width : 40%;}

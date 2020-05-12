@@ -1,5 +1,6 @@
 import api from './api.js';
 import { path } from './location.js';
+
 // webpack용 css 연결
 // import '../css/main.css';
 // import '../css/reset.css';
@@ -21,6 +22,7 @@ class Main {
     this.userContent = document.querySelector('.userContent');
     this.perData = 40;
     this.data = null;
+    this.userObj = null;
 
     // 로그인 상태 파악 후, 출력물
     if(!loginToken){
@@ -129,7 +131,7 @@ class Main {
         const {dataset : {id, server}} = user.children[0];
         this.reqDetailuser(id, server)
         .then(user => {
-          // 장비 아바타 크리쳐 휘장 테일즈만? 장비버프스킬 아바타버프스킬 크리쳐버프스킬
+          // 능력치 장비 아바타
           const userUrl = `https://img-api.neople.co.kr/df/servers/${server}/characters/${id}?zoom=3`
 
           this.userContent.innerHTML = '';
@@ -154,38 +156,143 @@ class Main {
             <div class="userItem MAGIC_STON"></div>
           </div>
           `;
-          return user;
+          this.userObj = [...user];
         })
-        .then((user) => {
-          const wrapped = this.userDetail;
-          const {equipment} = user[0];
-          this.fillingItem(wrapped, equipment);
-          return equipment;
+        .then(() => {
+          const {equipment} = this.userObj[1];
+          this.fillingItem(this.userDetail.childNodes, equipment);
         })
-        .then((equipment) => { // 장비 세부옵션
-          this.userContent.innerHTML = `<div class="detailEquipment"></div>`;
-
-          const basicUrl = 'https://img-api.neople.co.kr/df/items/';
-          const detailEqui = document.querySelector('.detailEquipment');
-          equipment.forEach(({itemAvailableLevel, itemId, itemName, reinforce, itemRarity, itemType, itemTypeDetail}) => {
-            detailEqui.innerHTML +=  `
-            <div class="dItemInfo">
-              <div class="dItemImg">
-                <span class="dItemLevel">Lv${itemAvailableLevel}</span>
-                <img src="${basicUrl+itemId}" alt="${itemName}">
-                <span class="dItemReinforce">+${reinforce}</span>
-              </div>
-              <div class="dItemRarity dItem">${itemRarity}</div>
-              <div class="dItemType dItem">${itemType}</div>
-              <div class="dItemTypeDetail dItem">${itemTypeDetail}</div>
-              <div class="dItemName dItem">${itemName}</div>
-            </div>
-            `
-          })
+        .then(() => { 
+          this.userDetailNavigation();
+          this.setUserInform('status');
         });
       })
     })
   };
+
+  // 네비게이션바
+  userDetailNavigation(){
+    this.userContent.innerHTML = `
+      <div class="navigation">
+        <div data-nav="status" class="navBtn">능력치</div>
+        <div data-nav="equipment" class="navBtn">장비</div>
+        <div data-nav="avatar" class="navBtn">아바타</div>
+      </div>
+      <div class="detailContentWrap"></div>
+    `
+
+    const nav = document.querySelectorAll('.navBtn');
+    [...nav].forEach(res => {
+      res.addEventListener('click', (e) => {
+        const navValue = e.target.dataset.nav;
+        this.setUserInform(navValue);
+      })
+    })
+  }
+
+  // 장비 세부옵션
+  setUserInform(type){
+    const wrap = document.querySelector('.detailContentWrap');
+    wrap.innerHTML = '';
+    const basicUrl = 'https://img-api.neople.co.kr/df/items/';
+    switch(type){
+      case 'status' : { // 능력치
+        const {status} = this.userObj[0];
+        if(!status){
+          wrap.innerHTML = '조회할 수 없습니다.';
+          return;
+        }
+        status.forEach(({name, value}) => {
+          wrap.innerHTML += `
+          <div class="dStatusInfo">
+            <div class="dStatusName">${name}</div>
+            <div class="dStatusValue">${value}</div>
+          </div>          
+          `
+        })
+      }break;
+      case 'equipment' : { // 장비
+        const {equipment} = this.userObj[1];
+        equipment.forEach(({itemAvailableLevel, itemId, itemName, reinforce, itemRarity, itemType, itemTypeDetail}) => {
+          wrap.innerHTML +=  `
+          <div class="dItemInfo">
+            <div class="dItemImg">
+              <span class="dItemLevel">Lv${itemAvailableLevel}</span>
+              <img src="${basicUrl+itemId}" alt="${itemName}">
+              <span class="dItemReinforce">+${reinforce}</span>
+            </div>
+            <div class="dItemRarity dItem">${itemRarity}</div>
+            <div class="dItemType dItem">${itemType}</div>
+            <div class="dItemTypeDetail dItem">${itemTypeDetail}</div>
+            <div class="dItemName dItem">${itemName}</div>
+          </div>
+          `
+        })
+      }break;
+      case 'avatar' : { // 아바타
+        const {avatar} = this.userObj[2];
+        wrap.innerHTML = `
+        <div class="dAvatarInfo">
+          <div class="dAvatar dAvatarHEADGEAR">No HEADGEAR Avatar</div>
+          <div class="dAvatar dAvatarHAIR">No HAIR Avatar</div>
+          <div class="dAvatar dAvatarFACE">No FACE Avatar</div>
+          <div class="dAvatar dAvatarJACKET">No JACKET Avatar</div>
+          <div class="dAvatar dAvatarPANTS">No PANTS Avatar</div>
+          <div class="dAvatar dAvatarSHOES">No SHOES Avatar</div>
+          <div class="dAvatar dAvatarBREAST">No BREAST Avatar</div>
+          <div class="dAvatar dAvatarWAIST">No WAIST Avatar</div>
+          <div class="dAvatar dAvatarSKIN">No SKIN Avatar</div>
+          <div class="dAvatar dAvatarAURORA">No AURORA Avatar</div>
+        </div>
+        `
+        avatar.forEach(({slotId, slotName, itemId, itemName, itemRarity, clone, optionAbility, emblems}) => {
+          const target = document.querySelector(`.dAvatar${slotId}`);
+          if(itemId){
+            let img = null;
+            let emblem = '';
+
+            if(clone.itemId){
+              img = `
+                <img src="${basicUrl+itemId}" alt="${itemName}">
+                <img src="${basicUrl+clone.itemId}" alt="${clone.itemName}">
+              `
+            }else{
+              img = `
+                <img src="${basicUrl+itemId}" alt="${itemName}">
+              `
+            };
+
+            if(emblems.length !== 0){
+              emblems.forEach(({slotColor, itemName, itemRarity}) => {
+                emblem = emblem + `
+                  <div class="emblem">
+                    <div class="emblemColor">${slotColor}</div>
+                    <div class="emblemName">${itemName}</div>
+                    <div class="emblemRairity">${itemRarity}</div>
+                  </div>
+                `
+              })
+            }else{
+              emblem = 'No Emblems';
+            }
+
+            target.innerHTML = `
+            <div class="dAvatarInfo">
+              <div class="dAvatarImg">
+              ${img}
+              </div>
+              <div class="dAvatarRarity dAvatar">${itemRarity}</div>
+              <div class="dAvatarName dAvatar">${slotName}</div>
+              <div class="dAvatarStatus dAvatar">${optionAbility}</div>
+              <div class="dAvatarEmblems dAvatar">${emblem}</div>
+            </div>
+            `
+          }
+        })
+      }break;
+    }
+  }
+
 
   // 총 유저 갯수 확인 후, 페이지네이션 생성
   createBtn(_btnLength){
@@ -241,8 +348,7 @@ class Main {
   }
 
   // 아이템 채우기.
-  fillingItem = (_wrapped, _equi) => {
-    const child = _wrapped.childNodes;
+  fillingItem = (child, _equi) => {
     Array.from(child).forEach(chi => {
       if(chi.nodeType !== 3){
         if(Array.from(chi.classList).includes('userItem')){
@@ -261,7 +367,7 @@ class Main {
             chi.innerHTML=`<span><b>${itemType}</b></span>` // 없는 아이템일 경우
           }
         }else{
-          this.fillingItem(chi, _equi);
+          this.fillingItem(chi.childNodes, _equi);
         }
       }
     })
@@ -279,15 +385,10 @@ class Main {
   reqDetailuser = (_id, _server) => {
     return new Promise(resolve => {
       const urlArr = [
-        'equip/equipment',
-        // 뭔 게임에 장비가 이렇게많음?
-        // 'equip/avatar',
-        // 'equip/creature',
-        // 'equip/flag',
-        // 'equip/talisman',
-        // 'skill/buff/equip/equipment',
-        // 'skill/buff/equip/avatar',
-        // 'skill/buff/equip/creature'
+        // 장비가 너~ 무 많아서 몇개만 추림.
+        'status', // 능력치
+        'equip/equipment', // 장비
+        'equip/avatar', // 아바타
       ]
       Promise.all(
         urlArr.map(url => {
