@@ -1,4 +1,5 @@
-import api from './api.js';
+import apiKey from './apiKey.js';
+import Template from './template.js';
 import { path } from './location.js';
 
 // webpack용 css 연결
@@ -6,7 +7,7 @@ import { path } from './location.js';
 // import '../css/reset.css';
 
 // 해결필요
-// 1. 검색등 (fetch작업중)일때는 검색 못하게 해야할듯
+// 1. 최대한 정리하기
 
 class Main {
   constructor(){
@@ -55,16 +56,10 @@ class Main {
     }else{
       const mainCharId = mainChar.children[0].dataset.id;
       const mainCharServer = mainChar.children[0].dataset.server;
-      fetch(`https://cors-anywhere.herokuapp.com/https://api.neople.co.kr/df/servers/${mainCharServer}/characters/${mainCharId}?apikey=${api}`)
+      fetch(`https://cors-anywhere.herokuapp.com/https://api.neople.co.kr/df/servers/${mainCharServer}/characters/${mainCharId}?apikey=${apiKey}`)
       .then(res => res.json())
       .then(data => {
-        mainChar.children[0].innerHTML = `
-          <div class="mainCharImg">
-            <img src="https://img-api.neople.co.kr/df/servers/${mainCharServer}/characters/${mainCharId}?zoom=3" alt="${data.characterName}">
-          </div>
-          <div class="mainCharRoot">Lv${data.level} ${data.characterName}</div>
-          <div class="mainCharClass">${data.jobName} ${data.jobGrowName}</div>        
-        `;
+        mainChar.children[0].innerHTML = Template.mainChar(data, mainCharServer, mainCharId);
 
         document.querySelector('.mainCharImg').addEventListener('click', () => {
           this.getUserDetailData(mainCharId,mainCharServer);
@@ -81,7 +76,7 @@ class Main {
     // 본래, 타이핑을 치면 검색리스트 출력되도록 하려했는데, proxy서버에서 한번 거쳐오는거라 지연되는게 있어, 그냥 검색누르면 나오는걸로
     return new Promise((resolve, reject) => {
       const name = e.target.searchName.value; 
-      const url = `https://cors-anywhere.herokuapp.com/https://api.neople.co.kr/df/servers/all/characters?characterName=${name}&limit=200&wordType=full&apikey=${api}`;
+      const url = `https://cors-anywhere.herokuapp.com/https://api.neople.co.kr/df/servers/all/characters?characterName=${name}&limit=200&wordType=full&apikey=${apiKey}`;
       this.userContent.innerHTML='<div class="loading">Loading...</div>'
       this.btnWrap.innerHTML = '';
       fetch(url)
@@ -98,7 +93,7 @@ class Main {
   }
 
   // 유저 검색 이후 실행 메소드
-  afterCreated = () => {
+  afterCreated(){
     const chooseMainChar = document.querySelectorAll('.chooseMainChar');
     const searchedUser = document.querySelectorAll('.searchedUser');
     let uid = null;
@@ -146,26 +141,7 @@ class Main {
 
       this.userContent.innerHTML = '';
       this.btnWrap.innerHTML = '';
-      this.userDetail.innerHTML = `
-      <div class="userItemLeft">
-        <div class="userItem SHOULDER"></div>
-        <div class="userItem JACKET"></div>
-        <div class="userItem PANTS"></div>
-        <div class="userItem WAIST"></div>
-        <div class="userItem SHOES"></div>
-      </div>
-      <img class="sUserImg" src="${userUrl}">
-      <div class="userItemRight">
-        <div class="userItem WEAPON"></div>
-        <div class="userItem TITLE"></div>
-        <div class="userItem RING"></div>
-        <div class="userItem AMULET"></div>
-        <div class="userItem SUPPORT"></div>
-        <div class="userItem WRIST"></div>
-        <div class="userItem EARRING"></div>
-        <div class="userItem MAGIC_STON"></div>
-      </div>
-      `;
+      this.userDetail.innerHTML = Template.userItem(userUrl)
       this.userObj = [...user];
     })
     .then(() => {
@@ -180,14 +156,7 @@ class Main {
 
   // 네비게이션바
   userDetailNavigation(){
-    this.userContent.innerHTML = `
-      <div class="navigation">
-        <div data-nav="status" class="navBtn navBtnTarget">능력치</div>
-        <div data-nav="equipment" class="navBtn">장비</div>
-        <div data-nav="avatar" class="navBtn">아바타</div>
-      </div>
-      <div class="detailContentWrap"></div>
-    `
+    this.userContent.innerHTML = Template.navBtn();
 
     const nav = document.querySelectorAll('.navBtn');
     [...nav].forEach(res => {
@@ -226,37 +195,12 @@ class Main {
       case 'equipment' : { // 장비
         const {equipment} = this.userObj[1];
         equipment.forEach(({itemAvailableLevel, itemId, itemName, reinforce, itemRarity, itemType, itemTypeDetail}) => {
-          wrap.innerHTML +=  `
-          <div class="dItemInfo">
-            <div class="dItemImg">
-              <span class="dItemLevel">Lv${itemAvailableLevel}</span>
-              <img src="${basicUrl+itemId}" alt="${itemName}">
-              <span class="dItemReinforce">+${reinforce}</span>
-            </div>
-            <div class="dItemRarity dItem">${itemRarity}</div>
-            <div class="dItemType dItem">${itemType}</div>
-            <div class="dItemTypeDetail dItem">${itemTypeDetail}</div>
-            <div class="dItemName dItem">${itemName}</div>
-          </div>
-          `
+          wrap.innerHTML += Template.equipment(itemAvailableLevel, itemId, itemName, reinforce, itemRarity, itemType, itemTypeDetail, basicUrl);
         })
       }break;
       case 'avatar' : { // 아바타
         const {avatar} = this.userObj[2];
-        wrap.innerHTML = `
-        <div class="dAvatarInfo">
-          <div class="dAvatar dAvatarHEADGEAR">No HEADGEAR Avatar</div>
-          <div class="dAvatar dAvatarHAIR">No HAIR Avatar</div>
-          <div class="dAvatar dAvatarFACE">No FACE Avatar</div>
-          <div class="dAvatar dAvatarJACKET">No JACKET Avatar</div>
-          <div class="dAvatar dAvatarPANTS">No PANTS Avatar</div>
-          <div class="dAvatar dAvatarSHOES">No SHOES Avatar</div>
-          <div class="dAvatar dAvatarBREAST">No BREAST Avatar</div>
-          <div class="dAvatar dAvatarWAIST">No WAIST Avatar</div>
-          <div class="dAvatar dAvatarSKIN">No SKIN Avatar</div>
-          <div class="dAvatar dAvatarAURORA">No AURORA Avatar</div>
-        </div>
-        `
+        wrap.innerHTML = Template.avatar();
         avatar.forEach(({slotId, slotName, itemId, itemName, itemRarity, clone, optionAbility, emblems}) => {
           const target = document.querySelector(`.dAvatar${slotId}`);
           if(itemId){
@@ -342,23 +286,12 @@ class Main {
     }
     this.userContent.innerHTML = '';
     filteredData.forEach(res => {
-      this.userContent.innerHTML += `
-      <div class="searchedUser">
-        <div class="chooseMainChar" data-id=${res.characterId} data-server=${res.serverId}>♥</div>
-        <div class="searchedUserImg">
-          <img src="https://img-api.neople.co.kr/df/servers/${res.serverId}/characters/${res.characterId}?zoom=1" alt="${res.characterName}">
-        </div>
-        <div class="searchedUserDesc">
-          <div class="searchedUserServer">${this.serverIdtoKorean(res.serverId)}</div>
-          <div class="searchedUserName">${res.characterName}</div>
-        </div>
-      </div>
-      `
+      this.userContent.innerHTML += Template.searchedUser(res);
     })
   }
 
   // 아이템 채우기.
-  fillingItem = (child, _equi) => {
+  fillingItem(child, _equi){
     Array.from(child).forEach(chi => {
       if(chi.nodeType !== 3){
         if(Array.from(chi.classList).includes('userItem')){
@@ -383,16 +316,8 @@ class Main {
     })
   }
 
-  // 서버명 한글로 변환
-  serverIdtoKorean(_serverId){
-    const serverEng = ['anton', 'bakal', 'cain', 'casillas', 'diregie', 'hilder', 'prey', 'siroco'];
-    const serverKor = ['안톤', '바칼', '카인', '카시야스', '디레지에', '힐더', '프레이', '시로코'];
-    const index = serverEng.indexOf(_serverId);
-    return serverKor[index];
-  }
-
   // 세부정보 요청 유저
-  reqDetailuser = (_id, _server) => {
+  reqDetailuser(_id, _server){
     return new Promise(resolve => {
       const urlArr = [
         // 장비가 너~ 무 많아서 몇개만 추림.
@@ -402,7 +327,7 @@ class Main {
       ]
       Promise.all(
         urlArr.map(url => {
-          const fullUrl = `https://cors-anywhere.herokuapp.com/https://api.neople.co.kr/df/servers/${_server}/characters/${_id}/${url}?apikey=${api}`
+          const fullUrl = `https://cors-anywhere.herokuapp.com/https://api.neople.co.kr/df/servers/${_server}/characters/${_id}/${url}?apikey=${apiKey}`
           return fetch(fullUrl)
           .then(res2 => res2.json())
         })

@@ -2,13 +2,15 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  mode : 'development',
   entry : {
-    main : './public/js/main.js'
+    main : './public/js/main.js',
+    signIn : './public/js/signIn.js',
+    signUp : './public/js/signIn.js'
   },
   output : {
     filename : './js/[name].js',
-    path : path.resolve(__dirname, 'dist'),
-    // pubilcPath : 'dist'
+    path : path.resolve(__dirname, 'build'),
   },
   module : {
     rules : [
@@ -22,21 +24,13 @@ module.exports = {
     ]
   },
   plugins : [
-    new HtmlWebpackPlugin({
-      minify : {
-        collapseWhitespace : true
-      },
-      hash : true,
-      template : './public/main.html',
-      filename : 'main.html'
+    ...['main','signIn','signUp'].map(html => {
+      const template = html === 'main' ? `./views/${html}.ejs` : `./public/${html}.html`;
+      return new HtmlWebpackPlugin({
+        template : template,
+        filename : `./html/${html}.html`,
+        chunks : [`${html}`]
+      })
     })
   ],
-  devServer : {
-    proxy : {
-      'https://api.neople.co.kr' : {
-        target : 'http://localhost:8080',
-        changeOrigin : true
-      }
-    }
-  }
 }
