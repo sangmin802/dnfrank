@@ -1,4 +1,7 @@
 import { path } from './location.js';
+// webpack용 css 연결
+// import '../css/reset.css';
+// import '../css/regist.css';
 
 class SignUp {
   constructor(){

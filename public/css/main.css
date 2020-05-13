@@ -3,14 +3,14 @@
 }
 .userTab {
   position : fixed;
-  left : 0;
-  top : 0;
+  left : 10px;
+  top : 10px;
   padding : 20px;
   width : 200px;
-  height : 100vh;
   z-index : 99;
   background-color : white;
-  border-right : 1px solid #dddddd;
+  border : 1px solid #eaeaea;
+  border-radius : 5px;
 }
 .userTab .mainChar {
   min-height : 225px;
@@ -21,6 +21,11 @@
 .userTab .mainCharImg img {
   display : block;
   width : 100%;
+  cursor : pointer;
+}
+.userTab .mainCharRoot, .userTab .mainCharClass {
+  color : #666666;
+  font-size : 1.2vw;
 }
 
 .contentWrap {
@@ -163,25 +168,26 @@
 }
 
 .detailContentWrap {
-  width : 60%;
-  margin : 0 auto;
+  width : 100%;
+  padding : 10px;
+  /* margin : 0 auto; */
 }
 .detailContentWrap .dItemInfo {
   display : flex;
+  justify-content : center;
   margin-bottom : 10px;
 }
 .detailContentWrap .dItemInfo .dItem {
   display : flex;
   align-items : center;
   justify-content : center;
-  color : #666;
   font-weight : 500;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
 }
 .detailContentWrap .dItemInfo .dItemImg {
-  width : 15%;
+  width : 5%;
   position : relative;
 }
 .detailContentWrap .dItemInfo .dItemImg img {
@@ -207,5 +213,88 @@
 }
 .detailContentWrap .dItemInfo .dItemRarity {width : 10%;}
 .detailContentWrap .dItemInfo .dItemType {width : 15%;}
-.detailContentWrap .dItemInfo .dItemTypeDetail {width : 20%;}
-.detailContentWrap .dItemInfo .dItemName {width : 40%;}
+.detailContentWrap .dItemInfo .dItemTypeDetail {width : 15%;}
+.detailContentWrap .dItemInfo .dItemName {width : 25%;}
+
+/* status */
+.detailContentWrap .dStatusInfo {
+  display : flex;
+  justify-content : center;
+}
+.detailContentWrap .dStatusInfo .dStatusName {
+  width : 25%;
+  font-size : 2vw;
+  margin-bottom : 5px;
+}
+
+/* avatar */
+.detailContentWrap .dAvatarInfo .dAvatar {
+  display : flex;
+  justify-content: center;
+  margin-bottom : 10px;
+}
+.detailContentWrap .dAvatarInfo .dAvatarImg {
+  width: 5%;
+  position: relative;
+}
+.detailContentWrap .dAvatarInfo .dAvatarImg .basicAvatar {
+  display: block;
+  width: 100%;
+}
+.detailContentWrap .dAvatarInfo .dAvatarImg .cloneAvatar {
+  position: absolute;
+  display: block;
+  width: 50%;
+  right: 0;
+  bottom: 0;
+}
+.detailContentWrap .dAvatarInfo .dAvatarParts {
+  display : flex;
+  justify-content : center;
+  align-items : center;
+  width : 10%;
+}
+.detailContentWrap .dAvatarInfo .dAvatarEmblems {
+  width : 45%;
+  flex-direction : column;
+}
+.detailContentWrap .dAvatarInfo .dAvatarEmblems .emblem {
+  width : 100%;
+  display : flex;
+  margin-bottom : 5px;
+}
+.detailContentWrap .dAvatarInfo .dAvatarEmblems .emblem > div {
+  flex-grow : 1;
+  text-align : center;
+}
+
+/* 로그인, 로그아웃, submit */
+form input[type=submit], .signUp, .signIn {
+  border : 0;
+  outline : none;
+  color : #333;
+  background-color : white;
+}
+form input[type=submit] {
+  margin-bottom : 15px;
+}
+
+/* navigation btn */
+.navigation {
+  width : 100%;
+  justify-content : center;
+  display : flex;
+}
+.navBtn {
+  color: #999;
+  border: 1px solid #666;
+  padding: 5px;
+  margin-right : 5px;
+  border-radius: 5px 5px 0 0;
+  cursor : pointer;
+}
+.navBtnTarget {
+  color : #666;
+  font-weight : 500;
+  border-bottom : 0;
+}

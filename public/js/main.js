@@ -7,7 +7,6 @@ import { path } from './location.js';
 
 // 해결필요
 // 1. 검색등 (fetch작업중)일때는 검색 못하게 해야할듯
-// 2. 없는 장비일 경우, null처리해아함. 출력이안되고있음
 
 class Main {
   constructor(){
@@ -66,6 +65,10 @@ class Main {
           <div class="mainCharRoot">Lv${data.level} ${data.characterName}</div>
           <div class="mainCharClass">${data.jobName} ${data.jobGrowName}</div>        
         `;
+
+        document.querySelector('.mainCharImg').addEventListener('click', () => {
+          this.getUserDetailData(mainCharId,mainCharServer);
+        })
       })
     }
   }
@@ -125,56 +128,61 @@ class Main {
       });
     });
 
-    // 유저 세부정보 
+    // 검색된 유저 상세보기
     Array.from(searchedUser).forEach(user => {
       user.addEventListener('click', (e) => {
         const {dataset : {id, server}} = user.children[0];
-        this.reqDetailuser(id, server)
-        .then(user => {
-          // 능력치 장비 아바타
-          const userUrl = `https://img-api.neople.co.kr/df/servers/${server}/characters/${id}?zoom=3`
-
-          this.userContent.innerHTML = '';
-          this.btnWrap.innerHTML = '';
-          this.userDetail.innerHTML = `
-          <div class="userItemLeft">
-            <div class="userItem SHOULDER"></div>
-            <div class="userItem JACKET"></div>
-            <div class="userItem PANTS"></div>
-            <div class="userItem WAIST"></div>
-            <div class="userItem SHOES"></div>
-          </div>
-          <img class="sUserImg" src="${userUrl}">
-          <div class="userItemRight">
-            <div class="userItem WEAPON"></div>
-            <div class="userItem TITLE"></div>
-            <div class="userItem RING"></div>
-            <div class="userItem AMULET"></div>
-            <div class="userItem SUPPORT"></div>
-            <div class="userItem WRIST"></div>
-            <div class="userItem EARRING"></div>
-            <div class="userItem MAGIC_STON"></div>
-          </div>
-          `;
-          this.userObj = [...user];
-        })
-        .then(() => {
-          const {equipment} = this.userObj[1];
-          this.fillingItem(this.userDetail.childNodes, equipment);
-        })
-        .then(() => { 
-          this.userDetailNavigation();
-          this.setUserInform('status');
-        });
+        this.getUserDetailData(id, server);
       })
     })
   };
+
+  // 유저 정보 출력하기
+  getUserDetailData(_id, _server){
+    this.reqDetailuser(_id, _server)
+    .then(user => {
+      // 능력치 장비 아바타
+      const userUrl = `https://img-api.neople.co.kr/df/servers/${_server}/characters/${_id}?zoom=3`
+
+      this.userContent.innerHTML = '';
+      this.btnWrap.innerHTML = '';
+      this.userDetail.innerHTML = `
+      <div class="userItemLeft">
+        <div class="userItem SHOULDER"></div>
+        <div class="userItem JACKET"></div>
+        <div class="userItem PANTS"></div>
+        <div class="userItem WAIST"></div>
+        <div class="userItem SHOES"></div>
+      </div>
+      <img class="sUserImg" src="${userUrl}">
+      <div class="userItemRight">
+        <div class="userItem WEAPON"></div>
+        <div class="userItem TITLE"></div>
+        <div class="userItem RING"></div>
+        <div class="userItem AMULET"></div>
+        <div class="userItem SUPPORT"></div>
+        <div class="userItem WRIST"></div>
+        <div class="userItem EARRING"></div>
+        <div class="userItem MAGIC_STON"></div>
+      </div>
+      `;
+      this.userObj = [...user];
+    })
+    .then(() => {
+      const {equipment} = this.userObj[1];
+      this.fillingItem(this.userDetail.childNodes, equipment);
+    })
+    .then(() => { 
+      this.userDetailNavigation();
+      this.setUserInform('status');
+    });
+  }
 
   // 네비게이션바
   userDetailNavigation(){
     this.userContent.innerHTML = `
       <div class="navigation">
-        <div data-nav="status" class="navBtn">능력치</div>
+        <div data-nav="status" class="navBtn navBtnTarget">능력치</div>
         <div data-nav="equipment" class="navBtn">장비</div>
         <div data-nav="avatar" class="navBtn">아바타</div>
       </div>
@@ -185,6 +193,10 @@ class Main {
     [...nav].forEach(res => {
       res.addEventListener('click', (e) => {
         const navValue = e.target.dataset.nav;
+        [...nav].forEach(btn => {
+          btn.classList.remove('navBtnTarget');
+        })
+        res.classList.add('navBtnTarget');
         this.setUserInform(navValue);
       })
     })
@@ -253,12 +265,12 @@ class Main {
 
             if(clone.itemId){
               img = `
-                <img src="${basicUrl+itemId}" alt="${itemName}">
-                <img src="${basicUrl+clone.itemId}" alt="${clone.itemName}">
+                <img src="${basicUrl+itemId}" alt="${itemName}" class="basicAvatar">
+                <img src="${basicUrl+clone.itemId}" alt="${clone.itemName}" class="cloneAvatar">
               `
             }else{
               img = `
-                <img src="${basicUrl+itemId}" alt="${itemName}">
+                <img src="${basicUrl+itemId}" alt="${itemName}" class="basicAvatar">
               `
             };
 
@@ -277,15 +289,13 @@ class Main {
             }
 
             target.innerHTML = `
-            <div class="dAvatarInfo">
-              <div class="dAvatarImg">
+            <div class="dAvatarImg">
               ${img}
-              </div>
-              <div class="dAvatarRarity dAvatar">${itemRarity}</div>
-              <div class="dAvatarName dAvatar">${slotName}</div>
-              <div class="dAvatarStatus dAvatar">${optionAbility}</div>
-              <div class="dAvatarEmblems dAvatar">${emblem}</div>
             </div>
+            <div class="dAvatarRarity dAvatarParts">${itemRarity}</div>
+            <div class="dAvatarName dAvatarParts">${slotName}</div>
+            <div class="dAvatarStatus dAvatarParts">${optionAbility}</div>
+            <div class="dAvatarEmblems dAvatarParts">${emblem}</div>
             `
           }
         })

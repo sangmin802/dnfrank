@@ -10,6 +10,9 @@
 <body>
   <div class="userTab">
     <% if(user) { %>
+      <form action="/logout" method="post">
+        <input type="submit" value='로그아웃'>
+      </form>
       <span>메인 캐릭터</span>
       <div class="mainChar">
         <% if(user.mainchar) { %>
@@ -19,9 +22,6 @@
           <span class="noMainCharInfo" data-uid="<%=user.id%>">메인캐릭터를 설정하세요</span>
         <% } %>
       </div>
-      <form action="/logout" method="post">
-        <input type="submit" value='로그아웃'>
-      </form>
     <% }else{ %>
       <span class="signUp">회원가입</span>
       <span class="signIn">로그인</span>

@@ -1,3 +1,7 @@
+@font-face {
+  font-family : THE_Hong;
+  src : url('./font/THE_HongChawangjanemo.ttf');
+}
 * {
   box-sizing : border-box;
   margin : 0;
@@ -5,7 +9,11 @@
   text-decoration : none;
   list-style : none;
   color : black;
+  font-family : THE_Hong;
+  font-size : 1.5vw;
 }
+
+
 
 /* input autofill 초기화 */
 input:-webkit-autofill,
