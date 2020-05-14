@@ -3,8 +3,8 @@ import Template from './template.js';
 import { path } from './location.js';
 
 // webpack용 css 연결
-// import '../css/main.css';
-// import '../css/reset.css';
+import '../css/main.css';
+import '../css/reset.css';
 
 // 해결필요
 // 1. 최대한 정리하기
@@ -14,9 +14,8 @@ class Main {
     // 로그인 여부
     const loginToken = document.cookie.includes('dnfUser=');
     const searchForm = document.querySelector('.searchForm');
-    const signUp = document.querySelector('.signUp');
-    const signIn = document.querySelector('.signIn');
 
+    this.userTab = document.querySelector('.userTab')
     this.userDetail = document.querySelector('.userDetail');
     this.btnWrap = document.querySelector('.btnContent');
     this.userContent = document.querySelector('.userContent');
@@ -24,8 +23,16 @@ class Main {
     this.data = null;
     this.userObj = null;
 
+
     // 로그인 상태 파악 후, 출력물
     if(!loginToken){
+      localStorage.removeItem('dnfUserInfo'); // 서버에서 특정 이유로 토큰이 없어졌을 때
+      this.userTab.innerHTML=`
+        <span class="signUp">회원가입</span>
+        <span class="signIn">로그인</span>
+      `
+      const signUp = document.querySelector('.signUp');
+      const signIn = document.querySelector('.signIn');
       signUp.addEventListener('click', () => {
         path('/signUp')
       })
@@ -34,7 +41,15 @@ class Main {
       })
     }else{
       // 메인케릭터 정보 입력
-      this.setMainCharInfo();
+      const {server, mainchar, id} = JSON.parse(localStorage.getItem('dnfUserInfo'));
+      this.userTab.innerHTML=`
+        <form action="/logout" method="post">
+          <input type="submit" value='로그아웃'>
+        </form>
+        <span>메인 캐릭터</span>
+        <div class="mainChar" data-uid="${id}"></div>
+      `;
+      this.setMainCharInfo(server, mainchar);
     }
 
     // 입력된 유저 검색
@@ -49,26 +64,27 @@ class Main {
     });
   }
 
-  setMainCharInfo(){
+  // 메인캐릭터 여부. 있으면 출력, 없으면 설정요구 문구 출력
+  setMainCharInfo = (server, mainchar) => {
     const mainChar = document.querySelector('.mainChar');
-    if(mainChar.textContent.includes('메인캐릭터를 설정하세요')){
-
+    if(!mainchar){
+      mainChar.innerHTML = `
+        <span class="noMainCharInfo">메인캐릭터를 설정하세요</span>
+      `;
     }else{
-      const mainCharId = mainChar.children[0].dataset.id;
-      const mainCharServer = mainChar.children[0].dataset.server;
-      fetch(`https://cors-anywhere.herokuapp.com/https://api.neople.co.kr/df/servers/${mainCharServer}/characters/${mainCharId}?apikey=${apiKey}`)
+      fetch(`https://cors-anywhere.herokuapp.com/https://api.neople.co.kr/df/servers/${server}/characters/${mainchar}?apikey=${apiKey}`)
       .then(res => res.json())
       .then(data => {
-        mainChar.children[0].innerHTML = Template.mainChar(data, mainCharServer, mainCharId);
+        mainChar.innerHTML = Template.mainChar(data, server, mainchar);
 
         document.querySelector('.mainCharImg').addEventListener('click', () => {
-          this.getUserDetailData(mainCharId,mainCharServer);
+          this.getUserDetailData(mainchar,server);
         })
       })
     }
   }
 
-  getSearchedData(e){
+  getSearchedData = (e) => {
     // cors에러 발생. 서로 다른 도메인간 교차요청이기때문에, 보안상 막힌건데 res.header에서 교차요청 허가해주는것은 api를 제공하는 서버에서 설정해야하는것이라, 다른 방법이없다.
     // 1. Proxy서버를 이용한다.
     // 2. Proxy서버를 개설한다.
@@ -93,16 +109,11 @@ class Main {
   }
 
   // 유저 검색 이후 실행 메소드
-  afterCreated(){
+  afterCreated = () => {
     const chooseMainChar = document.querySelectorAll('.chooseMainChar');
     const searchedUser = document.querySelectorAll('.searchedUser');
-    let uid = null;
+    const uid = document.querySelector('.mainChar').dataset.uid;
 
-    if(document.querySelector('.mainCharInfo')){
-      uid = document.querySelector('.mainCharInfo').dataset.uid
-    }else if(document.querySelector('.noMainCharInfo')){
-      uid = document.querySelector('.noMainCharInfo').dataset.uid;
-    }
     // 메인 캐릭터 설정
     Array.from(chooseMainChar).forEach(res => {
       res.addEventListener('click', () => {
@@ -115,8 +126,9 @@ class Main {
           body : JSON.stringify({id, server, uid})
         })
         .then(res => res.json())
-        .then(({result}) => {
+        .then(({result, immUser}) => {
           if(result){
+            localStorage.setItem('dnfUserInfo', JSON.stringify(immUser));
             path('/');
           }
         })
@@ -133,7 +145,7 @@ class Main {
   };
 
   // 유저 정보 출력하기
-  getUserDetailData(_id, _server){
+  getUserDetailData = (_id, _server) => {
     this.reqDetailuser(_id, _server)
     .then(user => {
       // 능력치 장비 아바타
@@ -155,7 +167,7 @@ class Main {
   }
 
   // 네비게이션바
-  userDetailNavigation(){
+  userDetailNavigation = () => {
     this.userContent.innerHTML = Template.navBtn();
 
     const nav = document.querySelectorAll('.navBtn');
@@ -172,7 +184,7 @@ class Main {
   }
 
   // 장비 세부옵션
-  setUserInform(type){
+  setUserInform = (type) => {
     const wrap = document.querySelector('.detailContentWrap');
     wrap.innerHTML = '';
     const basicUrl = 'https://img-api.neople.co.kr/df/items/';
@@ -238,7 +250,7 @@ class Main {
             </div>
             <div class="dAvatarRarity dAvatarParts">${itemRarity}</div>
             <div class="dAvatarName dAvatarParts">${slotName}</div>
-            <div class="dAvatarStatus dAvatarParts">${optionAbility}</div>
+            <div class="dAvatarStatus dAvatarParts">${optionAbility || 'No Status'}</div>
             <div class="dAvatarEmblems dAvatarParts">${emblem}</div>
             `
           }
@@ -249,7 +261,7 @@ class Main {
 
 
   // 총 유저 갯수 확인 후, 페이지네이션 생성
-  createBtn(_btnLength){
+  createBtn = (_btnLength) => {
     this.btnWrap.innerHTML = '';
     for(let i=1; i<_btnLength+1; i++){
       this.btnWrap.innerHTML += `
@@ -270,7 +282,7 @@ class Main {
   }
 
   // 검색된 유저 출력 40개단위
-  createUser(_num){
+  createUser = (_num) => {
     const immuData = Array.from(this.data);
     const value = immuData.length/this.perData;
     const rest = immuData.length%this.perData;
@@ -291,7 +303,7 @@ class Main {
   }
 
   // 아이템 채우기.
-  fillingItem(child, _equi){
+  fillingItem= (child, _equi) => {
     Array.from(child).forEach(chi => {
       if(chi.nodeType !== 3){
         if(Array.from(chi.classList).includes('userItem')){
@@ -317,7 +329,7 @@ class Main {
   }
 
   // 세부정보 요청 유저
-  reqDetailuser(_id, _server){
+  reqDetailuser = (_id, _server) => {
     return new Promise(resolve => {
       const urlArr = [
         // 장비가 너~ 무 많아서 몇개만 추림.

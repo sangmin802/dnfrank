@@ -1,7 +1,7 @@
 import { path } from './location.js';
 // webpack용 css 연결
-// import '../css/reset.css';
-// import '../css/regist.css';
+import '../css/reset.css';
+import '../css/regist.css';
 
 class SignIn {
   constructor(){
@@ -25,6 +25,7 @@ class SignIn {
         if(!type){
           alert.innerHTML = info.reason;
         }else{
+          localStorage.setItem('dnfUserInfo', JSON.stringify(info));
           path('/');
         }
       })

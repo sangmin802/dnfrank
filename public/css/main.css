@@ -1,22 +1,20 @@
 .loading {
-  margin : 40% auto;
+  margin : 10% auto;
 }
 .userTab {
   position : fixed;
-  left : 10px;
-  top : 10px;
-  padding : 20px;
-  width : 200px;
+  left : 1vw;
+  top : 1vw;
+  padding : 1vw;
+  width : 15%;
   z-index : 99;
   background-color : white;
   border : 1px solid #eaeaea;
   border-radius : 5px;
 }
 .userTab .mainChar {
-  min-height : 225px;
-}
-.userTab .mainChar .mainCharInfo {
   width : 100%;
+  min-height : 100%;
 }
 .userTab .mainCharImg img {
   display : block;
@@ -29,8 +27,9 @@
 }
 
 .contentWrap {
-  min-width : 1240px;
-  padding : 30px 240px;
+  width : 75%;
+  padding : 2% 0;
+  margin-left : 17%;
 }
 
 .contentWrap .searchForm {

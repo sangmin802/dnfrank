@@ -3,6 +3,7 @@ const router = express.Router();
 const JWT = require('jsonwebtoken');
 const jwtObj = require('../../auth/jwt.js');
 const db = require('../../db/db.js');
+const path = require('path');
 
 router.get('/', (req, res) => {
   // passport-session
@@ -10,19 +11,21 @@ router.get('/', (req, res) => {
 
   // passport-jwt
   const token = req.cookies.dnfUser;
-  let user = null;
   if(token){
     jwtVerfiy(token)
     .then(_user => {
-      res.render('main', {user : _user})
+      res.sendFile(path.join(__dirname+'../../../build/html/main.html'))
+      // res.sendFile(path.join(__dirname+'../../../public/main.html'))
     })
     .catch(_user => {
       // 만기되었을 경우, 쿠키삭제후 로그인화면으로 이동
       res.clearCookie('dnfUser');
-      res.render('main', {user : _user})
+      res.sendFile(path.join(__dirname+'../../../build/html/main.html'))
+      // res.sendFile(path.join(__dirname+'../../../public/main.html'))
     })
   }else{
-    res.render('main', {user : user})
+    res.sendFile(path.join(__dirname+'../../../build/html/main.html'));
+    // res.sendFile(path.join(__dirname+'../../../public/main.html'));
   }
 })
 
@@ -36,7 +39,7 @@ jwtVerfiy = (_token) => {
           // 만기된 토큰(쿠키) 시 reject 실행
           return reject(user);
         }else{
-          priId = decoded;
+          const {priId} = decoded;
           db.query('select * from user where id = ?', [priId], (err, result) => {
             if(err) throw err;
             const immUser = {...result[0]};

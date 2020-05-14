@@ -8,7 +8,8 @@ const JWT = require('jsonwebtoken');
 const middleWare = require('../../lib/middleware.js');
 
 router.get('/', middleWare.checkToken, (req, res) => {
-  res.sendFile(path.join(__dirname+'../../../public/signIn.html'))
+  res.sendFile(path.join(__dirname+'../../../build/html/signIn.html'))
+  // res.sendFile(path.join(__dirname+'../../../public/signIn.html'))
 })
 
 // passport-session
@@ -38,12 +39,14 @@ router.post('/checkUser', (req, res) => {
       return req.login(info, {session : false}, (loginErr) => {
         if(loginErr) throw loginErr;
         const priId = info.id
-        const token = JWT.sign(priId, jwtObj.secret);
-        // const token = JWT.sign(immUser, jwtObj.secret, {
+        let immUser = {...info};
+        delete immUser.upw;
+        const token = JWT.sign({priId}, jwtObj.secret);
+        // const token = JWT.sign({priId}, jwtObj.secret, {
         //   expiresIn : '1m'
         // });
         res.cookie('dnfUser', token);
-        return res.json({type : true, priId});
+        return res.json({type : true, info : immUser});
       })
     }
   })(req, res);

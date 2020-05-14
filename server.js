@@ -10,9 +10,10 @@ const port = 3000;
 const db = require('./db/db.js');
 db.connect();
 
-app.set('view engine', 'ejs');
+// app.set('view engine', 'ejs');
 
-app.use(express.static(__dirname+'/public'));
+// app.use(express.static(__dirname+'/public'));
+app.use(express.static(__dirname+'/build'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : true}))
 app.use((req, res, next) => {

@@ -13,7 +13,9 @@
   font-size : 1.5vw;
 }
 
-
+.alert {
+  text-align : center;
+}
 
 /* input autofill 초기화 */
 input:-webkit-autofill,
