@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  mode : 'development',
+  mode : 'production',
   entry : {
     main : './public/js/main.js',
     signIn : './public/js/signIn.js',
