@@ -11,7 +11,6 @@ const db = require('./db/db.js');
 db.connect();
 
 // app.set('view engine', 'ejs');
-
 // app.use(express.static(__dirname+'/public'));
 app.use(express.static(__dirname+'/build'));
 app.use(bodyParser.json());
@@ -25,6 +24,11 @@ app.use(cookieParser());
 // app.use(session({...sessionSet}));
 app.use(passport.initialize());
 // app.use(passport.session());
+
+
+// app.get('/', function (req, res) {
+//   res.send('Hello World!');
+// });
 app.use(router);
 
 app.listen(port, () => {

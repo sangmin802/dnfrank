@@ -6,7 +6,7 @@ module.exports = {
   entry : {
     main : './public/js/main.js',
     signIn : './public/js/signIn.js',
-    signUp : './public/js/signIn.js'
+    signUp : './public/js/signUp.js'
   },
   output : {
     filename : './js/[name].js',

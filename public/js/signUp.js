@@ -7,7 +7,6 @@ class SignUp {
   constructor(){
     const signUp = document.querySelector('.signUp');
     const alert = document.querySelector('.alert');
-
     signUp.addEventListener('submit', (e) => {
       e.preventDefault();
       const uid = e.target.uid.value;
